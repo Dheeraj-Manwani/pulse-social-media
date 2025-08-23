@@ -4,8 +4,8 @@ import useFollowerInfo from "@/hooks/useFollowerInfo";
 import kyInstance from "@/lib/ky";
 import { FollowerInfo } from "@/lib/types";
 import { QueryKey, useMutation, useQueryClient } from "@tanstack/react-query";
-import { Button } from "./ui/button";
-import { useToast } from "./ui/use-toast";
+import { cn } from "@/lib/utils";
+import { errorToast } from "@/lib/toast";
 
 interface FollowButtonProps {
   userId: string;
@@ -16,8 +16,6 @@ export default function FollowButton({
   userId,
   initialState,
 }: FollowButtonProps) {
-  const { toast } = useToast();
-
   const queryClient = useQueryClient();
 
   const { data } = useFollowerInfo(userId, initialState);
@@ -31,7 +29,6 @@ export default function FollowButton({
         : kyInstance.post(`/api/users/${userId}/followers`),
     onMutate: async () => {
       await queryClient.cancelQueries({ queryKey });
-
       const previousState = queryClient.getQueryData<FollowerInfo>(queryKey);
 
       queryClient.setQueryData<FollowerInfo>(queryKey, () => ({
@@ -46,19 +43,22 @@ export default function FollowButton({
     onError(error, variables, context) {
       queryClient.setQueryData(queryKey, context?.previousState);
       console.error(error);
-      toast({
-        variant: "destructive",
-        description: "Something went wrong. Please try again.",
-      });
+      errorToast("Something went wrong. Please try again.");
     },
   });
 
   return (
-    <Button
-      variant={data.isFollowedByUser ? "secondary" : "default"}
+    <button
       onClick={() => mutate()}
+      className={cn(
+        "rounded-full px-4 py-1.5 text-sm font-medium transition-colors",
+        "focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-1",
+        data.isFollowedByUser
+          ? "border border-input bg-background text-foreground hover:bg-muted"
+          : "bg-primary text-primary-foreground hover:bg-primary/90",
+      )}
     >
       {data.isFollowedByUser ? "Unfollow" : "Follow"}
-    </Button>
+    </button>
   );
 }

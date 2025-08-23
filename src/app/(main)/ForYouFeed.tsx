@@ -3,10 +3,11 @@
 import InfiniteScrollContainer from "@/components/InfiniteScrollContainer";
 import Post from "@/components/posts/Post";
 import PostsLoadingSkeleton from "@/components/posts/PostsLoadingSkeleton";
+import { Button } from "@/components/ui/button";
 import kyInstance from "@/lib/ky";
 import { PostsPage } from "@/lib/types";
 import { useInfiniteQuery } from "@tanstack/react-query";
-import { Loader2 } from "lucide-react";
+import { FileText, Loader2 } from "lucide-react";
 
 export default function ForYouFeed() {
   const {
@@ -16,6 +17,7 @@ export default function ForYouFeed() {
     isFetching,
     isFetchingNextPage,
     status,
+    refetch,
   } = useInfiniteQuery({
     queryKey: ["post-feed", "for-you"],
     queryFn: ({ pageParam }) =>
@@ -34,20 +36,28 @@ export default function ForYouFeed() {
   if (status === "pending") {
     return <PostsLoadingSkeleton />;
   }
-
   if (status === "success" && !posts.length && !hasNextPage) {
     return (
-      <p className="text-center text-muted-foreground">
-        No one has posted anything yet.
-      </p>
+      <div className="mx-auto max-w-md rounded-xl border border-border bg-card p-10 text-center text-muted-foreground shadow-sm">
+        <FileText className="mx-auto mb-3 h-8 w-8" />
+        <p className="mb-2 font-medium">No posts yet</p>
+        <p className="text-sm">
+          Be the first one to share something with the community.
+        </p>
+      </div>
     );
   }
 
   if (status === "error") {
     return (
-      <p className="text-center text-destructive">
-        An error occurred while loading posts.
-      </p>
+      <div className="mx-auto max-w-md rounded-xl border border-destructive/20 bg-destructive/10 p-5 text-center">
+        <p className="mb-3 font-medium text-destructive">
+          An error occurred while loading posts.
+        </p>
+        <Button variant="destructive" size="sm" onClick={() => refetch()}>
+          Try Again
+        </Button>
+      </div>
     );
   }
 
@@ -59,7 +69,11 @@ export default function ForYouFeed() {
       {posts.map((post) => (
         <Post key={post.id} post={post} />
       ))}
-      {isFetchingNextPage && <Loader2 className="mx-auto my-3 animate-spin" />}
+      {isFetchingNextPage && (
+        <div className="flex justify-center py-5 text-muted-foreground">
+          <Loader2 className="h-6 w-6 animate-spin" />
+        </div>
+      )}
     </InfiniteScrollContainer>
   );
 }

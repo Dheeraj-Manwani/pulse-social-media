@@ -14,9 +14,14 @@ export default function EditProfileButton({ user }: EditProfileButtonProps) {
 
   return (
     <>
-      <Button variant="outline" onClick={() => setShowDialog(true)}>
-        Edit profile
+      <Button
+        variant="secondary"
+        className="rounded-full font-medium shadow-sm transition hover:shadow-md"
+        onClick={() => setShowDialog(true)}
+      >
+        Edit Profile
       </Button>
+
       <EditProfileDialog
         user={user}
         open={showDialog}

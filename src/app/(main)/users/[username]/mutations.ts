@@ -1,4 +1,4 @@
-import { useToast } from "@/components/ui/use-toast";
+import { successToast, errorToast } from "@/lib/toast";
 import { PostsPage } from "@/lib/types";
 import { useUploadThing } from "@/lib/uploadthing";
 import { UpdateUserProfileValues } from "@/lib/validation";
@@ -8,12 +8,12 @@ import {
   useMutation,
   useQueryClient,
 } from "@tanstack/react-query";
-import { useRouter } from "next/navigation";
+// import { useRouter } from "next/navigation";
+import { useRouter } from "nextjs-toploader/app";
+
 import { updateUserProfile } from "./actions";
 
 export function useUpdateProfileMutation() {
-  const { toast } = useToast();
-
   const router = useRouter();
 
   const queryClient = useQueryClient();
@@ -70,16 +70,11 @@ export function useUpdateProfileMutation() {
 
       router.refresh();
 
-      toast({
-        description: "Profile updated",
-      });
+      successToast("Profile updated");
     },
     onError(error) {
       console.error(error);
-      toast({
-        variant: "destructive",
-        description: "Failed to update profile. Please try again.",
-      });
+      errorToast("Failed to update profile. Please try again.");
     },
   });
 

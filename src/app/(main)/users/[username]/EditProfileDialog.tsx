@@ -52,7 +52,6 @@ export default function EditProfileDialog({
   });
 
   const mutation = useUpdateProfileMutation();
-
   const [croppedAvatar, setCroppedAvatar] = useState<Blob | null>(null);
 
   async function onSubmit(values: UpdateUserProfileValues) {
@@ -61,10 +60,7 @@ export default function EditProfileDialog({
       : undefined;
 
     mutation.mutate(
-      {
-        values,
-        avatar: newAvatarFile,
-      },
+      { values, avatar: newAvatarFile },
       {
         onSuccess: () => {
           setCroppedAvatar(null);
@@ -76,12 +72,15 @@ export default function EditProfileDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>Edit profile</DialogTitle>
+      <DialogContent className="max-w-md rounded-2xl shadow-xl">
+        <DialogHeader className="pb-2">
+          <DialogTitle className="text-xl font-semibold tracking-tight">
+            Edit Profile
+          </DialogTitle>
         </DialogHeader>
-        <div className="space-y-1.5">
-          <Label>Avatar</Label>
+
+        {/* Avatar Upload */}
+        <div className="flex flex-col items-center gap-3 pb-4">
           <AvatarInput
             src={
               croppedAvatar
@@ -90,32 +89,26 @@ export default function EditProfileDialog({
             }
             onImageCropped={setCroppedAvatar}
           />
+          <p className="text-xs text-muted-foreground">
+            Click avatar to change
+          </p>
         </div>
+
+        {/* Form */}
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-3">
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <FormField
               control={form.control}
               name="displayName"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Display name</FormLabel>
+                  <FormLabel className="text-sm font-medium">
+                    Display Name
+                  </FormLabel>
                   <FormControl>
-                    <Input placeholder="Your display name" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="bio"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Bio</FormLabel>
-                  <FormControl>
-                    <Textarea
-                      placeholder="Tell us a little bit about yourself"
-                      className="resize-none"
+                    <Input
+                      placeholder="Your display name"
+                      className="rounded-xl"
                       {...field}
                     />
                   </FormControl>
@@ -123,9 +116,33 @@ export default function EditProfileDialog({
                 </FormItem>
               )}
             />
-            <DialogFooter>
-              <LoadingButton type="submit" loading={mutation.isPending}>
-                Save
+
+            <FormField
+              control={form.control}
+              name="bio"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-sm font-medium">Bio</FormLabel>
+                  <FormControl>
+                    <Textarea
+                      placeholder="Tell us a little bit about yourself"
+                      className="resize-none rounded-xl"
+                      rows={4}
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <DialogFooter className="pt-3">
+              <LoadingButton
+                type="submit"
+                loading={mutation.isPending}
+                className="rounded-full px-6 font-medium"
+              >
+                Save Changes
               </LoadingButton>
             </DialogFooter>
           </form>

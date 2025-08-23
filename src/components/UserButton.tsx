@@ -20,6 +20,7 @@ import {
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
 import UserAvatar from "./UserAvatar";
+import { useTopLoader } from "nextjs-toploader";
 
 interface UserButtonProps {
   className?: string;
@@ -27,6 +28,7 @@ interface UserButtonProps {
 
 export default function UserButton({ className }: UserButtonProps) {
   const { user } = useSession();
+  const loader = useTopLoader();
 
   const { theme, setTheme } = useTheme();
 
@@ -76,6 +78,7 @@ export default function UserButton({ className }: UserButtonProps) {
         <DropdownMenuSeparator />
         <DropdownMenuItem
           onClick={() => {
+            loader.trickle();
             queryClient.clear();
             logout();
           }}

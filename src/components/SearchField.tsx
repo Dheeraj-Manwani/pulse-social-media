@@ -1,7 +1,9 @@
 "use client";
 
 import { SearchIcon } from "lucide-react";
-import { useRouter } from "next/navigation";
+// import { useRouter } from "next/navigation";
+import { useRouter } from "nextjs-toploader/app";
+
 import { Input } from "./ui/input";
 
 export default function SearchField() {

@@ -23,20 +23,21 @@ export default function MessagesButton({ initialState }: MessagesButtonProps) {
   return (
     <Button
       variant="ghost"
-      className="flex items-center justify-start gap-3"
+      size="sm"
+      className="hover:text-brand flex items-center justify-start gap-3 text-foreground transition-colors"
       title="Messages"
       asChild
     >
       <Link href="/messages">
         <div className="relative">
-          <Mail />
+          <Mail className="h-5 w-5" />
           {!!data.unreadCount && (
-            <span className="absolute -right-1 -top-1 rounded-full bg-primary px-1 text-xs font-medium tabular-nums text-primary-foreground">
+            <span className="absolute -right-1 -top-1 rounded-full bg-primary px-1.5 text-[10px] font-medium tabular-nums text-primary-foreground shadow-sm">
               {data.unreadCount}
             </span>
           )}
         </div>
-        <span className="hidden lg:inline">Messages</span>
+        <span className="hidden font-medium lg:inline">Messages</span>
       </Link>
     </Button>
   );

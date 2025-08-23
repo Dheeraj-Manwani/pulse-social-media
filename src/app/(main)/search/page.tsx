@@ -14,16 +14,29 @@ export function generateMetadata({ searchParams: { q } }: PageProps): Metadata {
 
 export default function Page({ searchParams: { q } }: PageProps) {
   return (
-    <main className="flex w-full min-w-0 gap-5">
-      <div className="w-full min-w-0 space-y-5">
-        <div className="rounded-2xl bg-card p-5 shadow-sm">
-          <h1 className="line-clamp-2 break-all text-center text-2xl font-bold">
-            Search results for &quot;{q}&quot;
+    <main className="flex w-full min-w-0 gap-6">
+      {/* Main content */}
+      <div className="w-full min-w-0 space-y-6">
+        {/* Search header */}
+        <div className="rounded-2xl bg-card p-6 shadow-sm">
+          <h1 className="mb-2 break-words text-center text-2xl font-bold">
+            Results for <span className="text-primary">&quot;{q}&quot;</span>
           </h1>
+          <p className="text-center text-sm text-muted-foreground">
+            Showing latest posts, users, and more related to your search.
+          </p>
         </div>
-        <SearchResults query={q} />
+
+        {/* Results */}
+        <div className="rounded-2xl bg-card p-4 shadow-sm">
+          <SearchResults query={q} />
+        </div>
       </div>
-      <TrendsSidebar />
+
+      {/* Sidebar */}
+      <aside className="hidden w-80 shrink-0 lg:block">
+        <TrendsSidebar />
+      </aside>
     </main>
   );
 }

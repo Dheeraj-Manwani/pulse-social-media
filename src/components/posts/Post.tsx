@@ -22,36 +22,41 @@ interface PostProps {
 
 export default function Post({ post }: PostProps) {
   const { user } = useSession();
-
   const [showComments, setShowComments] = useState(false);
 
   return (
-    <article className="group/post space-y-3 rounded-2xl bg-card p-5 shadow-sm">
-      <div className="flex justify-between gap-3">
+    <article
+      className={cn(
+        "group/post space-y-4 rounded-2xl bg-card/90 p-5 shadow-sm transition hover:bg-card",
+      )}
+    >
+      {/* Header */}
+      <div className="flex items-start justify-between gap-3">
         <div className="flex flex-wrap gap-3">
           <UserTooltip user={post.user}>
             <Link href={`/users/${post.user.username}`}>
               <UserAvatar avatarUrl={post.user.avatarUrl} />
             </Link>
           </UserTooltip>
-          <div>
+          <div className="flex flex-col">
             <UserTooltip user={post.user}>
               <Link
                 href={`/users/${post.user.username}`}
-                className="block font-medium hover:underline"
+                className="font-semibold hover:underline"
               >
                 {post.user.displayName}
               </Link>
             </UserTooltip>
             <Link
               href={`/posts/${post.id}`}
-              className="block text-sm text-muted-foreground hover:underline"
+              className="text-xs text-muted-foreground hover:underline"
               suppressHydrationWarning
             >
               {formatRelativeDate(post.createdAt)}
             </Link>
           </div>
         </div>
+
         {post.user.id === user.id && (
           <PostMoreButton
             post={post}
@@ -59,14 +64,23 @@ export default function Post({ post }: PostProps) {
           />
         )}
       </div>
-      <Linkify>
-        <div className="whitespace-pre-line break-words">{post.content}</div>
-      </Linkify>
+
+      {/* Content */}
+      {post.content && (
+        <Linkify>
+          <div className="whitespace-pre-line break-words text-sm leading-relaxed">
+            {post.content}
+          </div>
+        </Linkify>
+      )}
+
+      {/* Media */}
       {!!post.attachments.length && (
         <MediaPreviews attachments={post.attachments} />
       )}
-      <hr className="text-muted-foreground" />
-      <div className="flex justify-between gap-5">
+
+      {/* Actions */}
+      <div className="flex items-center justify-between border-t pt-3">
         <div className="flex items-center gap-5">
           <LikeButton
             postId={post.id}
@@ -77,33 +91,35 @@ export default function Post({ post }: PostProps) {
           />
           <CommentButton
             post={post}
-            onClick={() => setShowComments(!showComments)}
+            onClick={() => setShowComments((s) => !s)}
           />
         </div>
         <BookmarkButton
           postId={post.id}
           initialState={{
             isBookmarkedByUser: post.bookmarks.some(
-              (bookmark) => bookmark.userId === user.id,
+              (b) => b.userId === user.id,
             ),
           }}
         />
       </div>
-      {showComments && <Comments post={post} />}
+
+      {/* Comments */}
+      {showComments && (
+        <div className="mt-3 rounded-xl border bg-muted/40 p-3">
+          <Comments post={post} />
+        </div>
+      )}
     </article>
   );
 }
 
-interface MediaPreviewsProps {
-  attachments: Media[];
-}
-
-function MediaPreviews({ attachments }: MediaPreviewsProps) {
+function MediaPreviews({ attachments }: { attachments: Media[] }) {
   return (
     <div
       className={cn(
-        "flex flex-col gap-3",
-        attachments.length > 1 && "sm:grid sm:grid-cols-2",
+        "grid gap-3",
+        attachments.length === 1 ? "grid-cols-1" : "sm:grid-cols-2",
       )}
     >
       {attachments.map((m) => (
@@ -113,50 +129,46 @@ function MediaPreviews({ attachments }: MediaPreviewsProps) {
   );
 }
 
-interface MediaPreviewProps {
-  media: Media;
-}
-
-function MediaPreview({ media }: MediaPreviewProps) {
+function MediaPreview({ media }: { media: Media }) {
   if (media.type === "IMAGE") {
     return (
       <Image
         src={media.url}
         alt="Attachment"
-        width={500}
-        height={500}
-        className="mx-auto size-fit max-h-[30rem] rounded-2xl"
+        width={600}
+        height={600}
+        className="mx-auto max-h-[28rem] w-full rounded-xl object-cover"
       />
     );
   }
-
   if (media.type === "VIDEO") {
     return (
-      <div>
-        <video
-          src={media.url}
-          controls
-          className="mx-auto size-fit max-h-[30rem] rounded-2xl"
-        />
-      </div>
+      <video
+        src={media.url}
+        controls
+        className="mx-auto max-h-[28rem] w-full rounded-xl object-cover"
+      />
     );
   }
-
   return <p className="text-destructive">Unsupported media type</p>;
 }
 
-interface CommentButtonProps {
+function CommentButton({
+  post,
+  onClick,
+}: {
   post: PostData;
   onClick: () => void;
-}
-
-function CommentButton({ post, onClick }: CommentButtonProps) {
+}) {
   return (
-    <button onClick={onClick} className="flex items-center gap-2">
-      <MessageSquare className="size-5" />
-      <span className="text-sm font-medium tabular-nums">
-        {post._count.comments}{" "}
-        <span className="hidden sm:inline">comments</span>
+    <button
+      onClick={onClick}
+      className="flex items-center gap-2 text-muted-foreground transition hover:text-foreground"
+    >
+      <MessageSquare className="h-5 w-5" />
+      <span className="text-sm tabular-nums">
+        {post._count.comments}
+        <span className="hidden sm:inline"> comments</span>
       </span>
     </button>
   );

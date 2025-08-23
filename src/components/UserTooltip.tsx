@@ -31,33 +31,42 @@ export default function UserTooltip({ children, user }: UserTooltipProps) {
 
   return (
     <TooltipProvider>
-      <Tooltip>
+      <Tooltip delayDuration={150}>
         <TooltipTrigger asChild>{children}</TooltipTrigger>
-        <TooltipContent>
-          <div className="flex max-w-80 flex-col gap-3 break-words px-1 py-2.5 md:min-w-52">
+        <TooltipContent side="right" className="p-0">
+          <div className="flex w-72 max-w-80 flex-col gap-3 rounded-xl border bg-card p-4 shadow-md">
+            {/* Top section: avatar + follow */}
             <div className="flex items-center justify-between gap-2">
               <Link href={`/users/${user.username}`}>
-                <UserAvatar size={70} avatarUrl={user.avatarUrl} />
+                <UserAvatar size={56} avatarUrl={user.avatarUrl} />
               </Link>
               {loggedInUser.id !== user.id && (
                 <FollowButton userId={user.id} initialState={followerState} />
               )}
             </div>
+
+            {/* Name + username */}
             <div>
               <Link href={`/users/${user.username}`}>
-                <div className="text-lg font-semibold hover:underline">
+                <div className="truncate text-lg font-semibold hover:underline">
                   {user.displayName}
                 </div>
-                <div className="text-muted-foreground">@{user.username}</div>
+                <div className="text-sm text-muted-foreground">
+                  @{user.username}
+                </div>
               </Link>
             </div>
+
+            {/* Bio */}
             {user.bio && (
               <Linkify>
-                <div className="line-clamp-4 whitespace-pre-line">
+                <div className="line-clamp-4 whitespace-pre-line text-sm text-muted-foreground">
                   {user.bio}
                 </div>
               </Linkify>
             )}
+
+            {/* Follower count */}
             <FollowerCount userId={user.id} initialState={followerState} />
           </div>
         </TooltipContent>

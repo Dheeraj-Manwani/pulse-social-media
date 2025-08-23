@@ -1,11 +1,8 @@
 import { validateRequest } from "@/auth";
-import { Button } from "@/components/ui/button";
 import prisma from "@/lib/prisma";
 import streamServerClient from "@/lib/stream";
-import { Bookmark, Home } from "lucide-react";
-import Link from "next/link";
-import MessagesButton from "./MessagesButton";
-import NotificationsButton from "./NotificationsButton";
+import { Bookmark, Home, Mail, Bell } from "lucide-react";
+import MenuItem from "./MenuItem";
 
 interface MenuBarProps {
   className?: string;
@@ -28,32 +25,24 @@ export default async function MenuBar({ className }: MenuBarProps) {
 
   return (
     <div className={className}>
-      <Button
-        variant="ghost"
-        className="flex items-center justify-start gap-3"
-        title="Home"
-        asChild
-      >
-        <Link href="/">
-          <Home />
-          <span className="hidden lg:inline">Home</span>
-        </Link>
-      </Button>
-      <NotificationsButton
-        initialState={{ unreadCount: unreadNotificationsCount }}
+      <MenuItem href="/" icon={<Home className="h-5 w-5" />} label="Home" />
+      <MenuItem
+        href="/notifications"
+        icon={<Bell className="h-5 w-5" />}
+        label="Notifications"
+        badgeCount={unreadNotificationsCount}
       />
-      <MessagesButton initialState={{ unreadCount: unreadMessagesCount }} />
-      <Button
-        variant="ghost"
-        className="flex items-center justify-start gap-3"
-        title="Bookmarks"
-        asChild
-      >
-        <Link href="/bookmarks">
-          <Bookmark />
-          <span className="hidden lg:inline">Bookmarks</span>
-        </Link>
-      </Button>
+      <MenuItem
+        href="/messages"
+        icon={<Mail className="h-5 w-5" />}
+        label="Messages"
+        badgeCount={unreadMessagesCount}
+      />
+      <MenuItem
+        href="/bookmarks"
+        icon={<Bookmark className="h-5 w-5" />}
+        label="Bookmarks"
+      />
     </div>
   );
 }

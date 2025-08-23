@@ -32,28 +32,46 @@ export default function Comments({ post }: CommentsProps) {
   const comments = data?.pages.flatMap((page) => page.comments) || [];
 
   return (
-    <div className="space-y-3">
-      <CommentInput post={post} />
+    <div className="space-y-4">
+      {/* Input */}
+      <div className="sticky top-0 z-10 border-b bg-card/80 pb-3 backdrop-blur">
+        <CommentInput post={post} />
+      </div>
+
+      {/* Load previous */}
       {hasNextPage && (
-        <Button
-          variant="link"
-          className="mx-auto block"
-          disabled={isFetching}
-          onClick={() => fetchNextPage()}
-        >
-          Load previous comments
-        </Button>
+        <div className="relative my-2 flex items-center">
+          <div className="flex-grow border-t" />
+          <Button
+            variant="ghost"
+            size="sm"
+            className="mx-2 text-muted-foreground hover:text-foreground"
+            disabled={isFetching}
+            onClick={() => fetchNextPage()}
+          >
+            Load previous
+          </Button>
+          <div className="flex-grow border-t" />
+        </div>
       )}
-      {status === "pending" && <Loader2 className="mx-auto animate-spin" />}
+
+      {/* States */}
+      {status === "pending" && (
+        <Loader2 className="mx-auto my-5 h-5 w-5 animate-spin text-muted-foreground" />
+      )}
       {status === "success" && !comments.length && (
-        <p className="text-center text-muted-foreground">No comments yet.</p>
-      )}
-      {status === "error" && (
-        <p className="text-center text-destructive">
-          An error occurred while loading comments.
+        <p className="py-5 text-center text-sm text-muted-foreground">
+          No comments yet. Be the first to reply!
         </p>
       )}
-      <div className="divide-y">
+      {status === "error" && (
+        <p className="py-5 text-center text-sm text-destructive">
+          Failed to load comments. Try again later.
+        </p>
+      )}
+
+      {/* Comment list */}
+      <div className="space-y-4">
         {comments.map((comment) => (
           <Comment key={comment.id} comment={comment} />
         ))}

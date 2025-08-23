@@ -27,20 +27,22 @@ export default function NotificationsButton({
   return (
     <Button
       variant="ghost"
-      className="flex items-center justify-start gap-3"
+      className="flex items-center justify-start gap-3 px-3 py-2"
       title="Notifications"
       asChild
     >
       <Link href="/notifications">
         <div className="relative">
-          <Bell />
+          <Bell className="h-5 w-5" />
           {!!data.unreadCount && (
-            <span className="absolute -right-1 -top-1 rounded-full bg-primary px-1 text-xs font-medium tabular-nums text-primary-foreground">
+            <span className="bg-brand absolute -right-1 -top-1 flex h-3 w-3 animate-pulse items-center justify-center rounded-full text-xs font-semibold text-primary-foreground">
               {data.unreadCount}
             </span>
           )}
         </div>
-        <span className="hidden lg:inline">Notifications</span>
+        <span className="hidden font-medium tracking-tight lg:inline">
+          Notifications
+        </span>
       </Link>
     </Button>
   );

@@ -23,20 +23,23 @@ export async function GET(req: NextRequest) {
         OR: [
           {
             content: {
-              search: searchQuery,
+              contains: q,
+              mode: "insensitive",
             },
           },
           {
             user: {
               displayName: {
-                search: searchQuery,
+                contains: q,
+                mode: "insensitive",
               },
             },
           },
           {
             user: {
               username: {
-                search: searchQuery,
+                contains: q,
+                mode: "insensitive",
               },
             },
           },
