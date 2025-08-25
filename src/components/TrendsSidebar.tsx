@@ -58,7 +58,7 @@ async function WhoToFollow() {
                   avatarUrl={user.avatarUrl}
                   className="size-10 flex-none"
                 />
-                <div className="min-w-0">
+                <div className="min-w-0 max-w-[9rem] overflow-ellipsis">
                   <p className="truncate font-medium hover:underline">
                     {user.displayName}
                   </p>

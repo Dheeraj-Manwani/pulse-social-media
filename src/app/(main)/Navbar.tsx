@@ -11,7 +11,7 @@ export default function Navbar() {
           href="/"
           className="text-brand text-2xl font-bold tracking-tight transition-opacity hover:opacity-90"
         >
-          Pulse
+          pulse
         </Link>
 
         {/* Search field */}

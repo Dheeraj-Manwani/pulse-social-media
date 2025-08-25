@@ -20,6 +20,11 @@
     --primary: 222 80% 52%;
     --primary-foreground: 0 0% 100%;
 
+    /* #3f3fa3 */
+    /* 
+    --primary: 240 45% 44%;
+    --primary-foreground: 0 0% 100%; */
+
     --secondary: 220 14% 96%;
     --secondary-foreground: 222 47% 11%;
 
@@ -35,6 +40,8 @@
     --border: 220 13% 91%;
     --input: 220 13% 91%;
     --ring: 222 80% 52%;
+
+    /* --ring: 240 45% 44%; */
 
     --radius: 0.75rem;
   }
@@ -52,6 +59,9 @@
 
     --primary: 222 80% 60%;
     --primary-foreground: 0 0% 100%;
+
+    /* --primary: 240 45% 44%;
+    --primary-foreground: 0 0% 100%; */
 
     --secondary: 222 25% 15%;
     --secondary-foreground: 0 0% 95%;

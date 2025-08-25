@@ -25,7 +25,37 @@ export const metadata: Metadata = {
     template: "%s | Pulse",
     default: "Pulse",
   },
-  description: "Stay connected with the rhythm of conversations in real-time.",
+  description:
+    "Pulse is a social media app where you can feel the rhythm, connect, and share moments.",
+  icons: {
+    icon: "/favicon.ico",
+    shortcut: "/favicon.ico",
+    apple: "/apple-touch-icon.png",
+  },
+  openGraph: {
+    title: "Pulse – Feel the Rhythm",
+    description:
+      "A social platform to connect, share, and feel the rhythm together.",
+    url: "https://pulse-social-media-pi.vercel.app",
+    siteName: "Pulse",
+    images: [
+      {
+        url: "/full_logo.png", // 👈 put this in your /public folder
+        // width: 1200,
+        // height: 630,
+        alt: "Pulse App Preview",
+      },
+    ],
+    locale: "en_US",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Pulse – Feel the Rhythm",
+    description:
+      "A social platform to connect, share, and feel the rhythm together.",
+    images: ["/full_logo.png"], // 👈 also from /public
+  },
 };
 
 export default function RootLayout({
@@ -54,7 +84,7 @@ export default function RootLayout({
             enableSystem
             disableTransitionOnChange
           >
-            <NextTopLoader color="#6366F1" height={6} />
+            <NextTopLoader color="#2563EB" height={4} />
             <main className="relative flex min-h-screen flex-col">
               {children}
             </main>

@@ -11,8 +11,7 @@ const nextConfig = {
     remotePatterns: [
       {
         protocol: "https",
-        hostname: "utfs.io",
-        pathname: "/**", // ✅ allow all paths from utfs.io
+        hostname: "**", // 🔥 allow any host
       },
     ],
   },
