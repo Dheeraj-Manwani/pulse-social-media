@@ -38,14 +38,7 @@ export const metadata: Metadata = {
       "A social platform to connect, share, and feel the rhythm together.",
     url: "https://pulse-social-media-pi.vercel.app",
     siteName: "Pulse",
-    images: [
-      {
-        url: "/full_logo.png", // 👈 put this in your /public folder
-        // width: 1200,
-        // height: 630,
-        alt: "Pulse App Preview",
-      },
-    ],
+    images: ["https://d2jow4rnitzfmr.cloudfront.net/full_logo.png"],
     locale: "en_US",
     type: "website",
   },
