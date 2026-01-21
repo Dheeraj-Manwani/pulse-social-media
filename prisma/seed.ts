@@ -117,6 +117,37 @@ async function fetchRandomPhoto(
   }
 }
 
+// Helper function to fetch a random avatar image (square, smaller size)
+async function fetchRandomAvatar(size: number = 400): Promise<File> {
+  // Use Picsum Photos API to get random square images for avatars
+  const imageId = Math.floor(Math.random() * 1000); // Random image ID
+  const url = `https://picsum.photos/${size}/${size}?random=${imageId}`;
+  
+  try {
+    const response = await fetch(url);
+    if (!response.ok) {
+      throw new Error(`Failed to fetch avatar: ${response.statusText}`);
+    }
+    
+    const arrayBuffer = await response.arrayBuffer();
+    const buffer = Buffer.from(arrayBuffer);
+    const uint8Array = new Uint8Array(buffer);
+    
+    const contentType = response.headers.get("content-type") || "image/jpeg";
+    const extension = contentType.includes("jpeg") ? "jpg" : "png";
+    
+    const blob = new Blob([uint8Array], { type: contentType });
+    
+    return new File([blob], `avatar-${Date.now()}-${imageId}.${extension}`, {
+      type: contentType,
+    });
+  } catch (error) {
+    console.error(`  ⚠️  Failed to fetch random avatar, using fallback:`, error);
+    // Fallback: create a simple colored square image
+    return createFallbackImage(size, size);
+  }
+}
+
 // Fallback function to create a simple image if fetching fails
 function createFallbackImage(
   width: number = 800,
@@ -216,11 +247,36 @@ async function main() {
     parallelism: 1,
   });
 
+  // Check if UploadThing is configured for avatar uploads
+  let utApi: UTApi | null = null;
+  if (process.env.UPLOADTHING_SECRET) {
+    utApi = new UTApi();
+  }
+
   for (const email of userEmails) {
     const userId = generateIdFromEntropySize(10);
     const username = getUsernameFromEmail(email);
     // Use the Indian names mapping if available, otherwise use the generated name
     const displayName = indianNames[username] || getDisplayNameFromEmail(email);
+
+    let avatarUrl: string | null = null;
+
+    // Upload avatar image if UploadThing is configured
+    if (utApi && process.env.NEXT_PUBLIC_UPLOADTHING_APP_ID) {
+      try {
+        console.log(`  📤 Uploading avatar for ${displayName}...`);
+        const avatarFile = await fetchRandomAvatar(400);
+        const uploadedUrl = await uploadToUploadThing(avatarFile, utApi);
+        avatarUrl = uploadedUrl;
+        console.log(`  ✅ Avatar uploaded for ${displayName}`);
+      } catch (error) {
+        console.error(
+          `  ⚠️  Failed to upload avatar for ${displayName}:`,
+          error instanceof Error ? error.message : error,
+        );
+        // Continue without avatar if upload fails
+      }
+    }
 
     const user = await prisma.user.create({
       data: {
@@ -230,6 +286,7 @@ async function main() {
         email,
         passwordHash,
         bio: `Namaste! I'm ${displayName}. Welcome to my profile! 👋`,
+        avatarUrl,
       },
     });
 
@@ -322,7 +379,10 @@ async function main() {
     console.log("  ⚠️  UPLOADTHING_SECRET not set, skipping media uploads");
     console.log("  ℹ️  Set UPLOADTHING_SECRET and NEXT_PUBLIC_UPLOADTHING_APP_ID to upload media\n");
   } else {
-    const utApi = new UTApi();
+    // Use the UTApi instance created earlier, or create new one if not available
+    if (!utApi) {
+      utApi = new UTApi();
+    }
     // Upload images for exactly 50 posts (50% of posts will have images)
     const maxMedia = 50;
     // Randomly select which posts will have images
