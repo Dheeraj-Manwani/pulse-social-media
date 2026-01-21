@@ -68,6 +68,17 @@ export function useUpdateProfileMutation() {
         },
       );
 
+      // Invalidate all user-related queries to refresh profile pages
+      await queryClient.invalidateQueries({
+        predicate: (query) => {
+          const key = query.queryKey[0];
+          return (
+            typeof key === "string" &&
+            (key.includes("user") || key.includes("profile") || key.includes("posts"))
+          );
+        },
+      });
+
       router.refresh();
 
       successToast("Profile updated");

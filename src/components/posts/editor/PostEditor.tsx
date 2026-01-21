@@ -210,6 +210,7 @@ function AttachmentPreview({
           width={500}
           height={500}
           className="size-fit max-h-[30rem] rounded-2xl"
+          unoptimized={src.startsWith("blob:")}
         />
       ) : (
         <video controls className="size-fit max-h-[30rem] rounded-2xl">
