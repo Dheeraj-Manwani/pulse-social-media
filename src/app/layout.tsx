@@ -28,7 +28,10 @@ export const metadata: Metadata = {
   description:
     "Pulse is a social media app where you can feel the rhythm, connect, and share moments.",
   icons: {
-    icon: "/favicon.ico",
+    icon: [
+      { url: "/favicon.ico", sizes: "any" },
+      // { url: "/full_logo.png", type: "image/png", sizes: "512x512" },
+    ],
     shortcut: "/favicon.ico",
     apple: "/apple-touch-icon.png",
   },

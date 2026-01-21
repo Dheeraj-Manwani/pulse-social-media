@@ -46,13 +46,18 @@ export async function GET(req: NextRequest) {
     });
 
     if (existingUser) {
-      const session = await lucia.createSession(existingUser.id, {});
+      // Create session that expires in 7 days
+      const expiresAt = new Date();
+      expiresAt.setDate(expiresAt.getDate() + 7);
+      
+      const session = await lucia.createSession(existingUser.id, {
+        expiresAt,
+      });
       const sessionCookie = lucia.createSessionCookie(session.id);
-      cookies().set(
-        sessionCookie.name,
-        sessionCookie.value,
-        sessionCookie.attributes,
-      );
+      cookies().set(sessionCookie.name, sessionCookie.value, {
+        ...sessionCookie.attributes,
+        maxAge: 60 * 60 * 24 * 7, // 7 days in seconds
+      });
       return new Response(null, {
         status: 302,
         headers: {
@@ -81,13 +86,18 @@ export async function GET(req: NextRequest) {
       });
     });
 
-    const session = await lucia.createSession(userId, {});
+    // Create session that expires in 7 days
+    const expiresAt = new Date();
+    expiresAt.setDate(expiresAt.getDate() + 7);
+    
+    const session = await lucia.createSession(userId, {
+      expiresAt,
+    });
     const sessionCookie = lucia.createSessionCookie(session.id);
-    cookies().set(
-      sessionCookie.name,
-      sessionCookie.value,
-      sessionCookie.attributes,
-    );
+    cookies().set(sessionCookie.name, sessionCookie.value, {
+      ...sessionCookie.attributes,
+      maxAge: 60 * 60 * 24 * 7, // 7 days in seconds
+    });
 
     return new Response(null, {
       status: 302,

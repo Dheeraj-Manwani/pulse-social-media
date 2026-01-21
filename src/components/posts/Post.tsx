@@ -130,26 +130,66 @@ function MediaPreviews({ attachments }: { attachments: Media[] }) {
 }
 
 function MediaPreview({ media }: { media: Media }) {
+  const [imageError, setImageError] = useState(false);
+  const [imageLoading, setImageLoading] = useState(true);
+
   if (media.type === "IMAGE") {
+    // Fallback to regular img tag if Next.js Image fails
+    if (imageError) {
+      return (
+        <img
+          src={media.url}
+          alt="Attachment"
+          className="mx-auto max-h-[28rem] w-full rounded-xl object-cover"
+          onError={(e) => {
+            // If even the regular img fails, show error message
+            e.currentTarget.style.display = "none";
+          }}
+        />
+      );
+    }
+
     return (
-      <Image
-        src={media.url}
-        alt="Attachment"
-        width={600}
-        height={600}
-        className="mx-auto max-h-[28rem] w-full rounded-xl object-cover"
-      />
+      <div className="relative mx-auto w-full">
+        {imageLoading && (
+          <div className="absolute inset-0 flex items-center justify-center rounded-xl bg-muted">
+            <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
+          </div>
+        )}
+        <Image
+          src={media.url}
+          alt="Attachment"
+          width={600}
+          height={600}
+          className={cn(
+            "mx-auto max-h-[28rem] w-full rounded-xl object-cover transition-opacity",
+            imageLoading ? "opacity-0" : "opacity-100",
+          )}
+          onError={() => {
+            setImageError(true);
+            setImageLoading(false);
+          }}
+          onLoad={() => setImageLoading(false)}
+          unoptimized={media.url.includes("uploadthing.com")}
+          priority={false}
+        />
+      </div>
     );
   }
+
   if (media.type === "VIDEO") {
     return (
       <video
         src={media.url}
         controls
         className="mx-auto max-h-[28rem] w-full rounded-xl object-cover"
+        onError={(e) => {
+          console.error("Video load error:", e);
+        }}
       />
     );
   }
+
   return <p className="text-destructive">Unsupported media type</p>;
 }
 

@@ -64,11 +64,10 @@ export const validateRequest = cache(
     try {
       if (result.session && result.session.fresh) {
         const sessionCookie = lucia.createSessionCookie(result.session.id);
-        cookies().set(
-          sessionCookie.name,
-          sessionCookie.value,
-          sessionCookie.attributes,
-        );
+        cookies().set(sessionCookie.name, sessionCookie.value, {
+          ...sessionCookie.attributes,
+          maxAge: 60 * 60 * 24 * 7, // 7 days in seconds
+        });
       }
       if (!result.session) {
         const sessionCookie = lucia.createBlankSessionCookie();
